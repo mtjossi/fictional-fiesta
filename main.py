@@ -9,7 +9,7 @@ from tqdm import tqdm
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()
 
-@st.cache
+# @st.cache
 def get_latest():
     df_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
     df_filled = df_filled.iloc[1:,:5]

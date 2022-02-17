@@ -9,11 +9,8 @@ from tqdm import tqdm
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()
 
-# @st.cache
 def get_latest():
     df_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
-    df_filled = df_filled.iloc[1:,:5]
-    df_filled.reset_index(inplace=True, drop=True)
 
     START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
 

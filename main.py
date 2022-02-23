@@ -10,44 +10,27 @@ requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.
 today = datetime.datetime.today().date().isoformat()
 
 def get_latest():
-    df_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
+    df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
+    df2_filled['raw_number'] = 0
 
-    START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
-
-    df_filled['raw_number'] = 0
-    df_filled['retrieved on'] = 0
-
-    for i, v in tqdm(enumerate(df_filled['ISIN']), total=df_filled.shape[0]):
-        if v != '0000':
+    for i, v in tqdm(enumerate(df2_filled['ISIN']), total=df2_filled.shape[0]):
+        if v not in ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006']:
+            START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
             URL = f"{START_URL}{v}"
             r = requests.get(URL, verify=False)
             sleep(1)
-            soup = bs(r.text, features='lxml')
+            soup = bs(r.text)
             numbers = soup.find_all(class_="trd-price")
             number = numbers[-1].text
             dates = soup.find_all(class_="text-left")
             date = pd.to_datetime(dates[-1].text.strip(), format="%d.%m.%Y").date().isoformat()
 
-        df_filled.loc[i, 'raw_number'] = number
-        df_filled.loc[i, 'retrieved on'] = today
-        df_filled.loc[i, 'price as of'] = date
+            df2_filled.loc[i, 'raw_number'] = number
+            df2_filled.loc[i, 'price as of'] = date
 
+        else:
+            START_URL = "http://elsissavdo.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D="
 
-    for i, v in enumerate(df_filled['raw_number']):
-        if v != 0:
-
-            price = float(v.strip().replace(',','.').replace(' ',''))
-            df_filled.loc[i, 'PRICE'] = price
-
-    df_filled = df_filled.drop('raw_number', axis=1)
-
-    START_URL = "http://elsissavdo.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D="
-
-    df_filled['PRICE 2'] = 0
-    df_filled['price as of 2'] = 0
-
-    for i, v in enumerate(df_filled['ISIN']):
-        if v != '0000':
             URL2 = f"{START_URL}{v}"
             temp_df = pd.read_html(URL2)[0]
             temp_df = temp_df.dropna().iloc[0,[2,6]]
@@ -61,10 +44,20 @@ def get_latest():
                 date = 'N/A'
 
 
-        df_filled.loc[i, 'PRICE 2'] = price
-        df_filled.loc[i, 'price as of 2'] = date
+            df2_filled.loc[i, 'PRICE'] = price
+            df2_filled.loc[i, 'price as of'] = date
+    
+    for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
+        if k != 0:
+            price = float(k.strip().replace(',','.').replace(' ',''))
+            df2_filled.loc[j, 'PRICE'] = price
 
-    return df_filled
+    df2_filled = df2_filled.drop('raw_number', axis=1)
+
+    df2_filled.loc[df2_filled.shape[0]+1] = ['', '','retrieved on','', today]
+
+    return df2_filled
+
 
 @st.cache
 def convert_df(df):

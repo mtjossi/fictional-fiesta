@@ -19,7 +19,7 @@ def get_latest():
             URL = f"{START_URL}{v}"
             r = requests.get(URL, verify=False)
             sleep(1)
-            soup = bs(r.text)
+            soup = bs(r.text, 'lxml')
             numbers = soup.find_all(class_="trd-price")
             number = numbers[-1].text
             dates = soup.find_all(class_="text-left")

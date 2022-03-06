@@ -53,8 +53,11 @@ def get_latest():
             df2_filled.loc[j, 'PRICE'] = price
 
     df2_filled = df2_filled.drop('raw_number', axis=1)
-
-    df2_filled.loc[df2_filled.shape[0]+1] = ['', '','retrieved on','', today]
+    
+    df2_filled[''] = ''
+    df2_filled['Security'] = df2_filled['Stock Code']
+    df2_filled['as of Date'] = today
+    df2_filled['Value'] = df2_filled['PRICE']
 
     return df2_filled
 

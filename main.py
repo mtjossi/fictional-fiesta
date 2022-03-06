@@ -40,7 +40,7 @@ def get_latest():
                 date = temp_df[0]
                 date = pd.to_datetime(date.split(' ')[0], format="%Y-%m-%d").date().isoformat()
             else:
-                price = 'N/A'
+                price = 0
                 date = 'N/A'
 
 

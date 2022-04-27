@@ -97,7 +97,10 @@ def get_latest2():
             temp_df = temp_df.dropna().iloc[0,[2,6]]
             if temp_df[1] != 'No results found.':
                 price = temp_df[1]
-                price = float(price.replace(' ',''))
+                try:
+                    price = float(price.replace(' ',''))
+                except:
+                    price = float(price)
                 date = temp_df[0]
                 date = pd.to_datetime(date.split(' ')[0], format="%Y-%m-%d").date().isoformat()
             else:

@@ -60,6 +60,8 @@ def get_latest2():
 
             df2_filled.loc[i, 'PRICE2'] = price
             df2_filled.loc[i, 'date2'] = date
+            df2_filled.loc[i, 'PRICE'] = price
+            df2_filled.loc[i, 'price as of'] = date
 
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
@@ -73,13 +75,12 @@ def get_latest2():
                 df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
             date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%d.%m.%Y").date().isoformat()
             df2_filled.loc[j, 'date2'] = date2
-
-
-    
+  
 
     df2_filled[''] = ''
     df2_filled['Security'] = df2_filled['Stock Code']
     df2_filled['as of Date'] = df2_filled['date2']
+    df2_filled['as of Date'] = df2_filled['as of Date'].iloc[0]
     df2_filled['Value'] = df2_filled['PRICE2']
 
     df2_filled = df2_filled.drop('raw_number', axis=1)

@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup as bs
 import datetime
 from time import sleep
 from tqdm import tqdm
+import ssl
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()

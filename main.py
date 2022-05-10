@@ -5,9 +5,9 @@ from bs4 import BeautifulSoup as bs
 import datetime
 from time import sleep
 from tqdm import tqdm
-import ssl
+# import ssl
 
-ssl._create_default_https_context = ssl._create_unverified_context
+# ssl._create_default_https_context = ssl._create_unverified_context
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()

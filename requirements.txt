@@ -7,4 +7,3 @@ tqdm
 openpyxl
 lxml
 certifi
-ssl

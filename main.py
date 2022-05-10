@@ -8,6 +8,7 @@ from tqdm import tqdm
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def get_latest2():
     df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)

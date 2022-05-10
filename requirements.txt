@@ -6,4 +6,3 @@ datetime
 tqdm
 openpyxl
 lxml
-certifi

@@ -5,13 +5,10 @@ from bs4 import BeautifulSoup as bs
 import datetime
 from time import sleep
 from tqdm import tqdm
-import ssl
 
-ssl._create_default_https_context = ssl._create_unverified_context
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()
-
 
 def get_latest2():
     df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
@@ -24,7 +21,6 @@ def get_latest2():
         'UZ7016990002', 'UZ7030360000']:
             START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
             URL = f"{START_URL}{v}"
-            temp = pd.read_html(URL)
             r = requests.get(URL, verify=False)
             sleep(1)
             soup = bs(r.text, 'lxml')
@@ -32,11 +28,16 @@ def get_latest2():
             number = numbers[-1].text
             dates = soup.find_all(class_="text-left")
             date = pd.to_datetime(dates[-1].text.strip(), format="%d.%m.%Y").date().isoformat()
+            table = soup.find_all("table", attrs={"class":"table centered-table table-bordered"})
+            table_body = table[3].find("tbody")
+            table_row = table_body.find_all("tr")[0]
+            table_date = table_row.find_all("td")[0]
+            table_price = table_row.find_all("td")[1]
 
             df2_filled.loc[i, 'raw_number'] = number
             df2_filled.loc[i, 'price as of'] = date
-            df2_filled.loc[i, 'date_raw'] = temp[4].iloc[0,0]
-            df2_filled.loc[i, 'raw_number2'] = temp[4].iloc[0,1]
+            df2_filled.loc[i, 'date_raw'] = table_date.text.strip()
+            df2_filled.loc[i, 'raw_number2'] = table_price.text.strip()
 
         else:
             START_URL = "http://elsissavdo.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D="

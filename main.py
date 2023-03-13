@@ -19,6 +19,7 @@ def get_latest2():
     for i, v in tqdm(enumerate(df2_filled['ISIN']), total=df2_filled.shape[0]):
         if v not in ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006', 
         'UZ7016990002', 'UZ7030360000']:
+            
             START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
             URL = f"{START_URL}{v}"
             r = requests.get(URL, verify=False)
@@ -52,7 +53,7 @@ def get_latest2():
                 except:
                     price = float(price)
                 date = temp_df[0]
-                date = pd.to_datetime(date.split(' ')[0], format="%Y-%m-%d").date().isoformat()
+                date = pd.to_datetime(date.split(' ')[0], format="%d-%m-%Y").date().isoformat()
             else:
                 price = 0
                 date = 'N/A'
@@ -81,6 +82,7 @@ def get_latest2():
     df2_filled['Security'] = df2_filled['Stock Code']
     df2_filled['as of Date'] = df2_filled['date2']
     df2_filled['as of Date'] = df2_filled['as of Date'].iloc[0]
+    df2_filled['as of Date'] = [datetime.datetime.strptime(d, "%Y-%m-%d").strftime("%m-%d-%Y") for d in df2_filled['as of Date']]
     df2_filled['Value'] = df2_filled['PRICE2']
 
     df2_filled = df2_filled.drop('raw_number', axis=1)

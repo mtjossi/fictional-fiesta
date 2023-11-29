@@ -41,9 +41,7 @@ def get_latest2():
             df2_filled.loc[i, 'raw_number2'] = table_price.text.strip()
 
         else:
-            START_URL = "http://elsissavdo.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D="
-
-            URL2 = f"{START_URL}{v}"
+            URL2 = f"http://otcmarket.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D={v}&ResultsSearch%5Bemitent%5D=&ResultsSearch%5Bquantity%5D=&ResultsSearch%5Bprice%5D="
             temp_df = pd.read_html(URL2)[0]
             temp_df = temp_df.dropna().iloc[0,[2,6]]
             if temp_df[1] != 'No results found.':
@@ -82,7 +80,7 @@ def get_latest2():
     df2_filled['Security'] = df2_filled['Stock Code']
     df2_filled['as of Date'] = df2_filled['date2']
     df2_filled['as of Date'] = df2_filled['as of Date'].iloc[0]
-    df2_filled['as of Date'] = [datetime.datetime.strptime(d, "%Y-%m-%d").strftime("%m-%d-%Y") for d in df2_filled['as of Date']]
+    df2_filled['as of Date'] = [datetime.datetime.strptime(d, "%Y-%m-%d").strftime("%m/%d/%Y") for d in df2_filled['as of Date']]
     df2_filled['Value'] = df2_filled['PRICE2']
 
     df2_filled = df2_filled.drop('raw_number', axis=1)

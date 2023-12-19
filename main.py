@@ -41,26 +41,27 @@ def get_latest2():
             df2_filled.loc[i, 'raw_number2'] = table_price.text.strip()
 
         else:
-            URL2 = f"http://otcmarket.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D={v}&ResultsSearch%5Bemitent%5D=&ResultsSearch%5Bquantity%5D=&ResultsSearch%5Bprice%5D="
-            temp_df = pd.read_html(URL2)[0]
-            temp_df = temp_df.dropna().iloc[0,[2,6]]
-            if temp_df[1] != 'No results found.':
-                price = temp_df[1]
-                try:
-                    price = float(price.replace(' ',''))
-                except:
-                    price = float(price)
-                date = temp_df[0]
-                date = pd.to_datetime(date.split(' ')[0], format="%d-%m-%Y").date().isoformat()
-            else:
-                price = 0
-                date = 'N/A'
+            pass
+            # URL2 = f"http://otcmarket.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D={v}&ResultsSearch%5Bemitent%5D=&ResultsSearch%5Bquantity%5D=&ResultsSearch%5Bprice%5D="
+            # temp_df = pd.read_html(URL2)[0]
+            # temp_df = temp_df.dropna().iloc[0,[2,6]]
+            # if temp_df[1] != 'No results found.':
+            #     price = temp_df[1]
+            #     try:
+            #         price = float(price.replace(' ',''))
+            #     except:
+            #         price = float(price)
+            #     date = temp_df[0]
+            #     date = pd.to_datetime(date.split(' ')[0], format="%d-%m-%Y").date().isoformat()
+            # else:
+            #     price = 0
+            #     date = 'N/A'
 
 
-            df2_filled.loc[i, 'PRICE2'] = price
-            df2_filled.loc[i, 'date2'] = date
-            df2_filled.loc[i, 'PRICE'] = price
-            df2_filled.loc[i, 'price as of'] = date
+            # df2_filled.loc[i, 'PRICE2'] = price
+            # df2_filled.loc[i, 'date2'] = date
+            # df2_filled.loc[i, 'PRICE'] = price
+            # df2_filled.loc[i, 'price as of'] = date
 
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):

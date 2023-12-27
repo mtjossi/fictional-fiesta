@@ -5,8 +5,9 @@ from bs4 import BeautifulSoup as bs
 import datetime
 from time import sleep
 from tqdm import tqdm
+import ssl
 
-
+ssl._create_default_https_context = ssl._create_unverified_context
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()
 
@@ -41,7 +42,10 @@ def get_latest2():
             df2_filled.loc[i, 'raw_number2'] = table_price.text.strip()
 
         else:
-            URL2 = f"http://otcmarket.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D={v}&ResultsSearch%5Bemitent%5D=&ResultsSearch%5Bquantity%5D=&ResultsSearch%5Bprice%5D="
+            # pass
+            # # START_URL = "http://elsissavdo.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D="
+            URL2 = f"https://uzse.uz/otcmarkets/trade_results?start_date=&end_date=&search_key={v}"
+            # URL2 = f"{START_URL}{v}"
             temp_df = pd.read_html(URL2)[0]
             temp_df = temp_df.dropna().iloc[0,[2,6]]
             if temp_df[1] != 'No results found.':
@@ -51,7 +55,7 @@ def get_latest2():
                 except:
                     price = float(price)
                 date = temp_df[0]
-                date = pd.to_datetime(date.split(' ')[0], format="%d-%m-%Y").date().isoformat()
+                date = pd.to_datetime(date.split(' ')[0], format="%Y-%m-%d").date().isoformat()
             else:
                 price = 0
                 date = 'N/A'
@@ -123,6 +127,28 @@ def get_latest3():
 
         else:
             pass
+            # # # START_URL = "http://elsissavdo.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D="
+            # URL2 = f"http://otcmarket.uz/results?ResultsSearch%5Btrtime%5D=&ResultsSearch%5Bstock%5D={v}&ResultsSearch%5Bemitent%5D=&ResultsSearch%5Bquantity%5D=&ResultsSearch%5Bprice%5D="
+            # # URL2 = f"{START_URL}{v}"
+            # temp_df = pd.read_html(URL2)[0]
+            # temp_df = temp_df.dropna().iloc[0,[2,6]]
+            # if temp_df[1] != 'No results found.':
+            #     price = temp_df[1]
+            #     try:
+            #         price = float(price.replace(' ',''))
+            #     except:
+            #         price = float(price)
+            #     date = temp_df[0]
+            #     date = pd.to_datetime(date.split(' ')[0], format="%d-%m-%Y").date().isoformat()
+            # else:
+            #     price = 0
+            #     date = 'N/A'
+
+
+            # df2_filled.loc[i, 'PRICE2'] = price
+            # df2_filled.loc[i, 'date2'] = date
+            # df2_filled.loc[i, 'PRICE'] = price
+            # df2_filled.loc[i, 'price as of'] = date
 
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
@@ -159,8 +185,8 @@ def convert_df(df):
 
 st.title('Testing2')
 
-start_button = st.button("Get Data - Full")
-start_button2 = st.button("Get Data - Partial")
+start_button = st.button("UZ all stocks")
+start_button2 = st.button("UZ stocks without OTC")
 
 if start_button:
     with st.spinner("Please wait..."):

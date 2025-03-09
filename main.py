@@ -71,16 +71,17 @@ def get_latest2():
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
         if k != 0:
-            if '.' not in k:
-                price = float(k.strip().replace(',','.').replace(' ',''))
-                df2_filled.loc[j, 'PRICE'] = price
-                try:
-                    price2 = float(df2_filled.loc[j, 'raw_number2'].strip().replace(',','.').replace(' ',''))
-                    df2_filled.loc[j, 'PRICE2'] = price2
-                except:
-                    df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
-                date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%Y-%m-%d").date().isoformat()
-                df2_filled.loc[j, 'date2'] = date2
+            # price = float(k.strip().replace(',','.').replace(' ',''))
+            print(k)
+            price = float(k.strip().replace(',','').replace(' ',''))
+            df2_filled.loc[j, 'PRICE'] = price
+            try:
+                price2 = float(df2_filled.loc[j, 'raw_number2'].strip().replace(',','').replace(' ',''))
+                df2_filled.loc[j, 'PRICE2'] = price2
+            except:
+                df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
+            date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%Y-%m-%d").date().isoformat()
+            df2_filled.loc[j, 'date2'] = date2
   
 
     df2_filled[''] = ''
@@ -132,20 +133,21 @@ def get_latest3():
 
         else:
             pass
-        
+
+
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
         if k != 0:
-            if '.' not in k:
-                price = float(k.strip().replace(',','.').replace(' ',''))
-                df2_filled.loc[j, 'PRICE'] = price
-                try:
-                    price2 = float(df2_filled.loc[j, 'raw_number2'].strip().replace(',','.').replace(' ',''))
-                    df2_filled.loc[j, 'PRICE2'] = price2
-                except:
-                    df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
-                date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%Y.%m.%d").date().isoformat()
-                df2_filled.loc[j, 'date2'] = date2
+            # price = float(k.strip().replace(',','.').replace(' ',''))
+            price = float(k.strip().replace(',','').replace(' ',''))
+            df2_filled.loc[j, 'PRICE'] = price
+            try:
+                price2 = float(df2_filled.loc[j, 'raw_number2'].strip().replace(',','.').replace(' ',''))
+                df2_filled.loc[j, 'PRICE2'] = price2
+            except:
+                df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
+            date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%Y.%m.%d").date().isoformat()
+            df2_filled.loc[j, 'date2'] = date2
   
 
     df2_filled[''] = ''
@@ -162,7 +164,6 @@ def get_latest3():
     df2_filled = df2_filled.drop('PRICE2', axis=1)
 
     return df2_filled
-
 
 def convert_df(df):
     return df.to_csv(index=None).encode('utf-8')

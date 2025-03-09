@@ -31,7 +31,7 @@ def get_latest2():
             numbers = soup.find_all(class_="trd-price")
             number = numbers[-1].text
             dates = soup.find_all(class_="text-left")
-            date = pd.to_datetime(dates[-1].text.strip(), format="%Y.%m.%d").date().isoformat()
+            date = pd.to_datetime(dates[-1].text.strip(), format="%Y-%m-%d").date().isoformat()
             table = soup.find_all("table", attrs={"class":"table centered-table table-bordered"})
             table_body = table[3].find("tbody")
             table_row = table_body.find_all("tr")[0]

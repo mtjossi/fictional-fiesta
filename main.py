@@ -31,7 +31,7 @@ def get_latest2():
             numbers = soup.find_all(class_="trd-price")
             number = numbers[-1].text
             dates = soup.find_all(class_="text-left")
-            date = pd.to_datetime(dates[-1].text.strip(), format="%Y-%m-%d").date().isoformat()
+            date = pd.to_datetime(dates[-1].text.strip(), format="%d.%m.%Y").date().isoformat()
             table = soup.find_all("table", attrs={"class":"table centered-table table-bordered"})
             table_body = table[3].find("tbody")
             table_row = table_body.find_all("tr")[0]
@@ -80,7 +80,7 @@ def get_latest2():
                 df2_filled.loc[j, 'PRICE2'] = price2
             except:
                 df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
-            date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%Y-%m-%d").date().isoformat()
+            date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%d.%m.%Y").date().isoformat()
             df2_filled.loc[j, 'date2'] = date2
   
 
@@ -119,7 +119,7 @@ def get_latest3():
             numbers = soup.find_all(class_="trd-price")
             number = numbers[-1].text
             dates = soup.find_all(class_="text-left")
-            date = pd.to_datetime(dates[-1].text.strip(), format="%Y.%m.%d").date().isoformat()
+            date = pd.to_datetime(dates[-1].text.strip(), format="%d.%m.%Y").date().isoformat()
             table = soup.find_all("table", attrs={"class":"table centered-table table-bordered"})
             table_body = table[3].find("tbody")
             table_row = table_body.find_all("tr")[0]

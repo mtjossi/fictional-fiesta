@@ -21,7 +21,7 @@ def get_latest2():
         print(f"Now trying {v}")
         if v not in ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006', 
         'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
-        'UZ7017850007', 'UZ7047650005']:
+        'UZ7017850007', 'UZ7047650005', 'UZ7004510002']:
             
             START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
             URL = f"{START_URL}{v}"
@@ -108,7 +108,7 @@ def get_latest3():
     for i, v in tqdm(enumerate(df2_filled['ISIN']), total=df2_filled.shape[0]):
         if v not in ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006', 
         'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
-        'UZ7017850007', 'UZ7047650005']:
+        'UZ7017850007', 'UZ7047650005', 'UZ7004510002']:
             
             START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
             print(v)
@@ -206,3 +206,4 @@ if start_button2:
     data = csv_file,
     file_name='latest.csv',
     mime='text/csv')
+

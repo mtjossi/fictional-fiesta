@@ -16,6 +16,9 @@ def get_latest2():
     df2_filled['raw_number'] = 0
     df2_filled['date_raw'] = 0
     df2_filled['raw_number2'] = 0
+    df2_filled['PRICE'] = None
+    df2_filled['PRICE2'] = None
+    df2_filled['date2'] = None
 
     errors = []
 
@@ -128,6 +131,9 @@ def get_latest3():
     df2_filled['raw_number'] = 0
     df2_filled['date_raw'] = 0
     df2_filled['raw_number2'] = 0
+    df2_filled['PRICE'] = None
+    df2_filled['PRICE2'] = None
+    df2_filled['date2'] = None
 
     errors = []
 

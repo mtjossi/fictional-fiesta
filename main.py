@@ -1,3 +1,4 @@
+import io
 import streamlit as st
 import pandas as pd
 import requests
@@ -67,7 +68,7 @@ def get_latest2():
                     # temp_df = pd.read_html(requests.get(URL2, verify=False, timeout=15).text)[0]
                     response = requests.get(URL2, verify=False)
                     response.raise_for_status() # Raise an exception for HTTP errors
-                    temp_df = pd.read_html(response.text)[0]
+                    temp_df = pd.read_html(io.StringIO(response.text))[0]
                     temp_df = temp_df.dropna().iloc[0,[2,6]]
                     if temp_df[1] != 'No results found.':
                         price = temp_df[1]

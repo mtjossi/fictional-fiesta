@@ -13,9 +13,9 @@ today = datetime.datetime.today().date().isoformat()
 
 def get_latest2():
     df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
-    df2_filled['raw_number'] = 0
-    df2_filled['date_raw'] = 0
-    df2_filled['raw_number2'] = 0
+    df2_filled['raw_number'] = ''
+    df2_filled['date_raw'] = ''
+    df2_filled['raw_number2'] = ''
     df2_filled['PRICE'] = None
     df2_filled['PRICE2'] = None
     df2_filled['date2'] = None
@@ -92,7 +92,7 @@ def get_latest2():
 
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
-        if k != 0:
+        if k:
             print(k)
             try:
                 price = float(k.strip().replace(',','').replace(' ',''))
@@ -128,9 +128,9 @@ def get_latest2():
 
 def get_latest3():
     df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
-    df2_filled['raw_number'] = 0
-    df2_filled['date_raw'] = 0
-    df2_filled['raw_number2'] = 0
+    df2_filled['raw_number'] = ''
+    df2_filled['date_raw'] = ''
+    df2_filled['raw_number2'] = ''
     df2_filled['PRICE'] = None
     df2_filled['PRICE2'] = None
     df2_filled['date2'] = None
@@ -186,7 +186,7 @@ def get_latest3():
 
 
     for j, k in tqdm(enumerate(df2_filled['raw_number']), total=df2_filled.shape[0]):
-        if k != 0:
+        if k:
             try:
                 price = float(k.strip().replace(',','').replace(' ',''))
                 df2_filled.loc[j, 'PRICE'] = price

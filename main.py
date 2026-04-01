@@ -70,13 +70,13 @@ def get_latest2():
                     response.raise_for_status() # Raise an exception for HTTP errors
                     temp_df = pd.read_html(io.StringIO(response.text))[0]
                     temp_df = temp_df.dropna().iloc[0,[2,6]]
-                    if temp_df[1] != 'No results found.':
-                        price = temp_df[1]
+                    if temp_df.iloc[1] != 'No results found.':
+                        price = temp_df.iloc[1]
                         try:
                             price = float(price.replace(' ',''))
                         except:
                             price = float(price)
-                        date = temp_df[0]
+                        date = temp_df.iloc[0]
                         date = pd.to_datetime(date.split(' ')[0], format="%Y-%m-%d").date().isoformat()
                     else:
                         price = 0

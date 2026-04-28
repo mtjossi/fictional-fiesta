@@ -7,6 +7,7 @@ import datetime
 from time import sleep
 from tqdm import tqdm
 import ssl
+import re
 
 ssl._create_default_https_context = ssl._create_unverified_context
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
@@ -35,7 +36,7 @@ def get_latest2():
                 r = requests.get(URL, verify=False, timeout=15)
                 sleep(1)
                 soup = bs(r.text, 'lxml')
-                numbers = soup.find_all(class_="trd-price")
+                numbers = soup.find_all(class_=re.compile(r"trd-price|price-up|price-down"))
                 if not numbers:
                     raise ValueError(f"No trd-price element found")
                 number = numbers[-1].text
@@ -153,7 +154,7 @@ def get_latest3():
                 r = requests.get(URL, verify=False, timeout=15)
                 sleep(1)
                 soup = bs(r.text, 'lxml')
-                numbers = soup.find_all(class_="trd-price")
+                numbers = soup.find_all(class_=re.compile(r"trd-price|price-up|price-down"))
                 if not numbers:
                     raise ValueError("No trd-price element found")
                 number = numbers[-1].text

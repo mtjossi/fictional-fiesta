@@ -31,15 +31,24 @@ def get_latest2():
             'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
             'UZ7017850007', 'UZ7047650005', 'UZ7004510002']:
 
-                START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
-                URL = f"{START_URL}{v}"
-                r = requests.get(URL, verify=False, timeout=15)
+                BASE_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
+                full_url = f"{BASE_URL}{v}"
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Referer': 'https://www.uzse.uz/',
+                }
+                r = requests.get(full_url, headers=headers, verify=False, timeout=15)
                 sleep(1)
                 soup = bs(r.text, 'lxml')
-                numbers = soup.find_all(class_=re.compile(r"trd-price|price-up|price-down"))
-                if not numbers:
-                    raise ValueError(f"No trd-price element found")
-                number = numbers[-1].text
+                
+                # Using '.trd-price' specifically to avoid the ticker elements at the top
+                price_element = soup.select_one('.trd-price')
+                if not price_element:
+                    raise ValueError(f"No price element found (Status: {r.status_code})")
+                
+                number = price_element.get_text(strip=True)
                 dates = soup.find_all(class_="text-left")
                 if not dates:
                     raise ValueError(f"No text-left element found")
@@ -67,7 +76,13 @@ def get_latest2():
                 URL2 = f"https://uzse.uz/otcmarkets/trade_results?start_date=&end_date=&search_key={v}"
                 try:
                     # temp_df = pd.read_html(requests.get(URL2, verify=False, timeout=15).text)[0]
-                    response = requests.get(URL2, verify=False)
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'Referer': 'https://www.uzse.uz/',
+                    }
+                    response = requests.get(URL2, headers=headers, verify=False, timeout=15)
                     response.raise_for_status() # Raise an exception for HTTP errors
                     temp_df = pd.read_html(io.StringIO(response.text))[0]
                     temp_df = temp_df.dropna().iloc[0,[2,6]]
@@ -148,16 +163,23 @@ def get_latest3():
             'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
             'UZ7017850007', 'UZ7047650005', 'UZ7004510002']:
 
-                START_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
-                print(v)
-                URL = f"{START_URL}{v}"
-                r = requests.get(URL, verify=False, timeout=15)
+                BASE_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
+                full_url = f"{BASE_URL}{v}"
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Referer': 'https://www.uzse.uz/',
+                }
+                r = requests.get(full_url, headers=headers, verify=False, timeout=15)
                 sleep(1)
                 soup = bs(r.text, 'lxml')
-                numbers = soup.find_all(class_=re.compile(r"trd-price|price-up|price-down"))
-                if not numbers:
-                    raise ValueError("No trd-price element found")
-                number = numbers[-1].text
+                
+                price_element = soup.select_one('.trd-price')
+                if not price_element:
+                    raise ValueError(f"No price element found (Status: {r.status_code})")
+                
+                number = price_element.get_text(strip=True)
                 dates = soup.find_all(class_="text-left")
                 if not dates:
                     raise ValueError("No text-left element found")

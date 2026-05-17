@@ -13,6 +13,10 @@ ssl._create_default_https_context = ssl._create_unverified_context
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 today = datetime.datetime.today().date().isoformat()
 
+otc_list = ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006',
+            'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
+            'UZ7017850007', 'UZ7047650005', 'UZ7004510002']
+
 def get_latest2():
     df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
     df2_filled['raw_number'] = ''
@@ -27,9 +31,7 @@ def get_latest2():
     for i, v in tqdm(enumerate(df2_filled['ISIN']), total=df2_filled.shape[0]):
         print(f"Now trying {v}")
         try:
-            if v not in ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006',
-            'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
-            'UZ7017850007', 'UZ7047650005', 'UZ7004510002']:
+            if v not in otc_list:
 
                 BASE_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
                 full_url = f"{BASE_URL}{v}"
@@ -159,9 +161,7 @@ def get_latest3():
 
     for i, v in tqdm(enumerate(df2_filled['ISIN']), total=df2_filled.shape[0]):
         try:
-            if v not in ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006',
-            'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
-            'UZ7017850007', 'UZ7047650005', 'UZ7004510002']:
+            if v not in otc_list:
 
                 BASE_URL = "https://www.uzse.uz/isu_infos/STK?isu_cd="
                 full_url = f"{BASE_URL}{v}"

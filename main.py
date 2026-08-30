@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import datetime
 from time import sleep
+from random import uniform
 from tqdm import tqdm
 import ssl
 import re
@@ -16,6 +17,18 @@ today = datetime.datetime.today().date().isoformat()
 otc_list = ['UZ7011030002', 'UZ7028090007', 'UZ7035340007', 'UZ7004770002', 'UZ7021490006',
             'UZ7016990002', 'UZ7030360000', 'UZ7032740001', 'UZ7016550004', 'UZ7016530006','UZ7026620003',
             'UZ7017850007', 'UZ7047650005', 'UZ7004510002']
+
+def fetch_with_retry(url, headers, max_retries=5, base_delay=5):
+    r = None
+    for attempt in range(max_retries):
+        r = requests.get(url, headers=headers, verify=False, timeout=15)
+        if r.status_code != 429:
+            return r
+        retry_after = r.headers.get('Retry-After')
+        wait = float(retry_after) if retry_after and retry_after.strip().isdigit() else base_delay * (2 ** attempt)
+        print(f"429 from {url}, waiting {wait}s before retry {attempt + 1}/{max_retries}")
+        sleep(wait)
+    return r
 
 def get_latest2():
     df2_filled = pd.read_excel('./codes.xlsx', sheet_name=-1)
@@ -41,10 +54,10 @@ def get_latest2():
                     'Accept-Language': 'en-US,en;q=0.9',
                     'Referer': 'https://www.uzse.uz/',
                 }
-                r = requests.get(full_url, headers=headers, verify=False, timeout=15)
-                sleep(1)
+                r = fetch_with_retry(full_url, headers)
+                sleep(uniform(1.5, 3))
                 soup = bs(r.text, 'lxml')
-                
+
                 # Using '.trd-price' specifically to avoid the ticker elements at the top
                 price_element = soup.select_one('.trd-price')
                 if not price_element:
@@ -55,10 +68,14 @@ def get_latest2():
                 if not dates:
                     raise ValueError(f"No text-left element found")
                 date = pd.to_datetime(dates[-1].text.strip(), format="%d.%m.%Y").date().isoformat()
-                tables = soup.find_all("table", attrs={"class":"table centered-table table-bordered"})
-                if len(tables) < 4:
-                    raise ValueError(f"Expected at least 4 tables, found {len(tables)}")
-                table_body = tables[3].find("tbody")
+                tables = soup.find_all("table", attrs={"class": "figma-table"})
+                history_table = next(
+                    (t for t in tables if t.find("thead") and "Цена закрытия" in t.find("thead").get_text()),
+                    None,
+                )
+                if history_table is None:
+                    raise ValueError(f"Could not find price history table (found {len(tables)} tables)")
+                table_body = history_table.find("tbody")
                 rows = table_body.find_all("tr") if table_body else []
                 if not rows:
                     raise ValueError("No rows in table body")
@@ -84,7 +101,8 @@ def get_latest2():
                         'Accept-Language': 'en-US,en;q=0.9',
                         'Referer': 'https://www.uzse.uz/',
                     }
-                    response = requests.get(URL2, headers=headers, verify=False, timeout=15)
+                    response = fetch_with_retry(URL2, headers)
+                    sleep(uniform(1.5, 3))
                     response.raise_for_status() # Raise an exception for HTTP errors
                     temp_df = pd.read_html(io.StringIO(response.text))[0]
                     temp_df = temp_df.dropna().iloc[0,[2,6]]
@@ -184,10 +202,14 @@ def get_latest3():
                 if not dates:
                     raise ValueError("No text-left element found")
                 date = pd.to_datetime(dates[-1].text.strip(), format="%d.%m.%Y").date().isoformat()
-                tables = soup.find_all("table", attrs={"class":"table centered-table table-bordered"})
-                if len(tables) < 4:
-                    raise ValueError(f"Expected at least 4 tables, found {len(tables)}")
-                table_body = tables[3].find("tbody")
+                tables = soup.find_all("table", attrs={"class": "figma-table"})
+                history_table = next(
+                    (t for t in tables if t.find("thead") and "Цена закрытия" in t.find("thead").get_text()),
+                    None,
+                )
+                if history_table is None:
+                    raise ValueError(f"Could not find price history table (found {len(tables)} tables)")
+                table_body = history_table.find("tbody")
                 rows = table_body.find_all("tr") if table_body else []
                 if not rows:
                     raise ValueError("No rows in table body")
@@ -218,11 +240,11 @@ def get_latest3():
                 price = float(k.strip().replace(',','').replace(' ',''))
                 df2_filled.loc[j, 'PRICE'] = price
                 try:
-                    price2 = float(df2_filled.loc[j, 'raw_number2'].strip().replace(',','.').replace(' ',''))
+                    price2 = float(df2_filled.loc[j, 'raw_number2'].strip().replace(',','').replace(' ',''))
                     df2_filled.loc[j, 'PRICE2'] = price2
                 except:
                     df2_filled.loc[j, 'PRICE2'] = float(df2_filled.loc[j, 'raw_number2'])
-                date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%Y.%m.%d").date().isoformat()
+                date2 = pd.to_datetime(df2_filled.loc[j, "date_raw"], format="%d.%m.%Y").date().isoformat()
                 df2_filled.loc[j, 'date2'] = date2
             except Exception as e:
                 isin = df2_filled.loc[j, 'ISIN']
